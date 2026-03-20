@@ -31,6 +31,45 @@ setTimeout(loop,TIMER);
 
 }
 
-loop();
+function loop(){
+
+let arr=(getDB()[ev]||[]).filter(f=>f.approvata);
+
+let grid=document.getElementById("grid");
+grid.innerHTML="";
+
+// evita duplicati
+let usate = [];
+
+for(let i=0;i<4;i++){
+
+if(arr.length==0) break;
+
+let random;
+
+// pesca finché non trova una foto non usata
+do{
+random = arr[Math.floor(Math.random()*arr.length)];
+}while(usate.includes(random) && usate.length < arr.length);
+
+usate.push(random);
+
+// FIX FORMATO 1920x1080 con Cloudinary
+let original = random.url;
+let fixed = original.replace(
+"/upload/",
+"/upload/c_fill,w_1920,h_1080,g_auto/"
+);
+
+let img=document.createElement("img");
+img.src = fixed;
+
+grid.appendChild(img);
+
+}
+
+setTimeout(loop,TIMER);
+
+}
 
 </script>
