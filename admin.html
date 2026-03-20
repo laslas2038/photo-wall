@@ -1,0 +1,38 @@
+<div id="box"></div>
+
+<script type="module">
+
+if(!sessionStorage.getItem("admin")) location="admin-login.html";
+
+import {getDB,approva,elimina} from "./db.js";
+
+let ev=prompt("Nome evento?");
+let arr=getDB()[ev]||[];
+
+let box=document.getElementById("box");
+
+arr.forEach(f=>{
+
+let div=document.createElement("div");
+
+div.innerHTML=`
+<img src="${f.url}" width=200><br>
+<button onclick="ok(${f.id})">APPROVA</button>
+<button onclick="del(${f.id})">ELIMINA</button>
+`;
+
+box.appendChild(div);
+
+});
+
+window.ok=id=>{
+approva(ev,id);
+location.reload();
+}
+
+window.del=id=>{
+elimina(ev,id);
+location.reload();
+}
+
+</script>
