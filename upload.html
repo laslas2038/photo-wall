@@ -1,0 +1,39 @@
+<input type="file" id="files" multiple>
+<br><br>
+<button onclick="up()">CARICA FOTO</button>
+
+<script type="module">
+
+import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
+import {addFoto} from "./db.js";
+
+let ev=new URLSearchParams(location.search).get("evento");
+
+window.up=async()=>{
+
+let files=document.getElementById("files").files;
+
+for(let f of files){
+
+let form=new FormData();
+form.append("file",f);
+form.append("upload_preset",UPLOAD_PRESET);
+
+let res=await fetch(
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+{
+method:"POST",
+body:form
+});
+
+let data=await res.json();
+
+addFoto(ev,data.secure_url);
+
+}
+
+alert("Foto caricate 🔥");
+
+}
+
+</script>
