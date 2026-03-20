@@ -1,0 +1,17 @@
+<h1>PHOTO WALL</h1>
+
+<input id="ev" placeholder="Nome evento">
+<br><br>
+
+<button onclick="go()">ENTRA</button>
+<button onclick="admin()">ADMIN</button>
+
+<script>
+function go(){
+location="upload.html?evento="+document.getElementById("ev").value;
+}
+
+function admin(){
+location="admin-login.html";
+}
+</script>
