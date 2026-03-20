@@ -1,0 +1,36 @@
+<div class="title" id="t"></div>
+<div class="grid" id="grid"></div>
+
+<script type="module">
+
+import {getDB} from "./db.js";
+import {TIMER} from "./config.js";
+
+let ev=new URLSearchParams(location.search).get("evento");
+document.getElementById("t").innerText=ev;
+
+function loop(){
+
+let arr=(getDB()[ev]||[]).filter(f=>f.approvata);
+
+let grid=document.getElementById("grid");
+grid.innerHTML="";
+
+for(let i=0;i<4;i++){
+
+if(arr.length==0) break;
+
+let img=document.createElement("img");
+img.src=arr[Math.floor(Math.random()*arr.length)].url;
+
+grid.appendChild(img);
+
+}
+
+setTimeout(loop,TIMER);
+
+}
+
+loop();
+
+</script>
