@@ -30,30 +30,26 @@
 
 </div>
 
+
+
+</body>
+</html>
 <script type="module">
 
 import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
 import {addFoto} from "./db.js";
 
-let ev=new URLSearchParams(location.search).get("evento") || "default";
+let params = new URLSearchParams(location.search);
+let ev = params.get("evento") || "evento";
 
-// TITOLI SICURI
-const eventi = {
-    laurea: "FESTA DI LAUREA",
-    compleanno: "COMPLEANNO",
-    discoteca: "SERATA LAS",
-    default: "EVENTO"
-};
-
-document.getElementById("titolo").innerText =
-eventi[ev] || ev.toUpperCase();
+document.getElementById("titolo").innerText = ev.toUpperCase();
 
 window.up=async()=>{
 
 let files=document.getElementById("files").files;
 
 if(files.length === 0){
-alert("Seleziona almeno una foto");
+alert("Seleziona una foto");
 return;
 }
 
@@ -81,6 +77,3 @@ alert("Foto caricate 🔥");
 }
 
 </script>
-
-</body>
-</html>
