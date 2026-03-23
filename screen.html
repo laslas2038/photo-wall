@@ -27,10 +27,16 @@ if(index >= arr.length) index = 0;
 
 let foto = arr[index];
 
-let fixed = foto.url.replace(
+let fixed;
+
+if(foto.url.includes("/upload/")){
+fixed = foto.url.replace(
 "/upload/",
 "/upload/c_fill,w_1920,h_1080,g_auto/"
 );
+}else{
+fixed = foto.url;
+}
 
 document.getElementById("img").src = fixed;
 
