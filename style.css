@@ -1,12 +1,14 @@
 body{
 margin:0;
-background:radial-gradient(circle,#111,#000);
-color:black;
-font-family:Arial;
-text-align:center;
+background:black;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
 overflow:hidden;
 }
 
+/* titolo sopra */
 .title{
 position:absolute;
 top:20px;
@@ -14,6 +16,7 @@ left:50%;
 transform:translateX(-50%);
 font-size:40px;
 text-shadow:0 0 20px cyan;
+z-index:10;
 }
 
 .grid{
@@ -56,8 +59,11 @@ border-radius:10px;
 border:none;
 }
 
+/* immagine */
 #img{
-width:100vw;
-height:100vh;
-object-fit:cover;
+width:75vw;      /* 75% larghezza schermo */
+height:75vh;     /* 75% altezza schermo */
+object-fit:contain;
+border-radius:20px;
+box-shadow:0 0 40px rgba(255,0,255,0.6);
 }
