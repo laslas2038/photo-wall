@@ -1,6 +1,34 @@
-<input type="file" id="files" multiple>
-<br><br>
-<button onclick="up()">CARICA FOTO</button>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Photo Wall</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="upload-container">
+
+    <h1 id="titolo"></h1>
+
+    <p class="subtitle">
+        CARICA LA TUA FOTO QUI<br>
+        E VEDILA SUL GRANDE SCHERMO
+    </p>
+
+    <label class="upload-btn">
+        SCEGLI FOTO
+        <input type="file" id="files" multiple hidden>
+    </label>
+
+    <br><br>
+
+    <button onclick="up()" class="send-btn">CARICA</button>
+
+    <img src="logo.png" class="logo">
+
+</div>
 
 <script type="module">
 
@@ -9,9 +37,25 @@ import {addFoto} from "./db.js";
 
 let ev=new URLSearchParams(location.search).get("evento");
 
+// 🎯 TITOLI DINAMICI
+const eventi = {
+    laurea: "FESTA DI LAUREA",
+    compleanno: "COMPLEANNO",
+    discoteca: "SERATA LAS",
+    default: ev ? ev.toUpperCase() : "EVENTO"
+};
+
+document.getElementById("titolo").innerText =
+eventi[ev] || eventi["default"];
+
 window.up=async()=>{
 
 let files=document.getElementById("files").files;
+
+if(files.length === 0){
+alert("Seleziona almeno una foto");
+return;
+}
 
 for(let f of files){
 
@@ -37,3 +81,6 @@ alert("Foto caricate 🔥");
 }
 
 </script>
+
+</body>
+</html>
