@@ -35,18 +35,18 @@
 import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
 import {addFoto} from "./db.js";
 
-let ev=new URLSearchParams(location.search).get("evento");
+let ev=new URLSearchParams(location.search).get("evento") || "default";
 
-// 🎯 TITOLI DINAMICI
+// TITOLI SICURI
 const eventi = {
     laurea: "FESTA DI LAUREA",
     compleanno: "COMPLEANNO",
     discoteca: "SERATA LAS",
-    default: ev ? ev.toUpperCase() : "EVENTO"
+    default: "EVENTO"
 };
 
 document.getElementById("titolo").innerText =
-eventi[ev] || eventi["default"];
+eventi[ev] || ev.toUpperCase();
 
 window.up=async()=>{
 
