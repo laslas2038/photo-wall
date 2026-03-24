@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -24,7 +25,9 @@ let index = 0;
 
 function loop(){
 
-let arr=(getDB()[ev]||[]).filter(f=>f.approvata);
+let db = getDB();
+
+let arr = (db.eventi[ev]?.foto || []).filter(f=>f.approvata);
 
 if(arr.length == 0){
 setTimeout(loop,TIMER);
@@ -35,16 +38,9 @@ if(index >= arr.length) index = 0;
 
 let foto = arr[index];
 
-let fixed;
-
-if(foto.url.includes("/upload/")){
-fixed = foto.url.replace(
-"/upload/",
-"/upload/c_fill,w_1920,h_1080,g_auto/"
-);
-}else{
-fixed = foto.url;
-}
+let fixed = foto.url.includes("/upload/")
+? foto.url.replace("/upload/","/upload/c_fill,w_1920,h_1080,g_auto/")
+: foto.url;
 
 document.getElementById("img").src = fixed;
 
