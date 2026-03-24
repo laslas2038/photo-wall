@@ -26,7 +26,7 @@
 
     <button onclick="up()" class="send-btn">CARICA</button>
 
-    <!-- togli se non hai logo -->
+    <!-- opzionale -->
     <!-- <img src="logo.png" class="logo"> -->
 
 </div>
@@ -36,14 +36,16 @@
 let CLOUD_NAME = "dcdur6xo9";
 let UPLOAD_PRESET = "photowall";
 
+// prendo evento da URL
 let params = new URLSearchParams(location.search);
 let ev = params.get("evento") || "evento";
 
+// titolo dinamico
 document.getElementById("titolo").innerText = ev.toUpperCase();
 
 async function up(){
 
-let files=document.getElementById("files").files;
+let files = document.getElementById("files").files;
 
 if(files.length === 0){
 alert("Seleziona una foto");
@@ -52,25 +54,33 @@ return;
 
 for(let f of files){
 
-let form=new FormData();
-form.append("file",f);
-form.append("upload_preset",UPLOAD_PRESET);
+let form = new FormData();
+form.append("file", f);
+form.append("upload_preset", UPLOAD_PRESET);
 
-let res=await fetch(
+// upload su Cloudinary
+let res = await fetch(
 `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
 {
-method:"POST",
-body:form
+method: "POST",
+body: form
 });
 
-let data=await res.json();
+let data = await res.json();
 
-// salva nel database locale
-let db = JSON.parse(localStorage.getItem("db") || "{}");
+// SALVATAGGIO CORRETTO DATABASE
+let db = JSON.parse(localStorage.getItem("db") || '{"eventi":{}}');
 
-if(!db[ev]) db[ev] = [];
+if(!db.eventi) db.eventi = {};
 
-db[ev].push({
+if(!db.eventi[ev]){
+db.eventi[ev] = {
+nome: ev.toUpperCase(),
+foto: []
+};
+}
+
+db.eventi[ev].foto.push({
 url: data.secure_url,
 approvata: false
 });
