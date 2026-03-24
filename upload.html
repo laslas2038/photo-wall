@@ -39,18 +39,24 @@
 import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
 import {addFoto} from "./db.js";
 
+<script>
+
 let params = new URLSearchParams(location.search);
 let ev = params.get("evento") || "evento";
 
 document.getElementById("titolo").innerText = ev.toUpperCase();
 
-window.up=async()=>{
+function up(){
 
 let files=document.getElementById("files").files;
 
 if(files.length === 0){
 alert("Seleziona una foto");
 return;
+}
+
+alert("Upload pronto (step successivo)");
+
 }
 
 for(let f of files){
