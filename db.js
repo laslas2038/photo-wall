@@ -1,33 +1,31 @@
 export function getDB(){
-return JSON.parse(localStorage.getItem("db")||"{}");
+let db = JSON.parse(localStorage.getItem("db") || '{"eventi":{}}');
+
+if(!db.eventi) db.eventi = {};
+
+return db;
 }
 
 export function saveDB(db){
-localStorage.setItem("db",JSON.stringify(db));
+localStorage.setItem("db", JSON.stringify(db));
 }
 
 export function addFoto(evento,url){
-let db=getDB();
-if(!db[evento]) db[evento]=[];
-db[evento].push({
+
+let db = getDB();
+
+if(!db.eventi[evento]){
+db.eventi[evento] = {
+nome: evento.toUpperCase(),
+foto: []
+};
+}
+
+db.eventi[evento].foto.push({
 url:url,
-approvata:false,
-id:Date.now()
+approvata:false
 });
-saveDB(db);
-}
 
-export function approva(evento,id){
-let db=getDB();
-db[evento]=db[evento].map(f=>{
-if(f.id==id) f.approvata=true;
-return f;
-});
 saveDB(db);
-}
 
-export function elimina(evento,id){
-let db=getDB();
-db[evento]=db[evento].filter(f=>f.id!=id);
-saveDB(db);
 }
