@@ -1,16 +1,40 @@
-<h1>ADMIN</h1>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
-<input type="password" id="p">
+<body class="upload-container">
+
+<h1>ADMIN LOGIN</h1>
+
+<input type="password" id="p" placeholder="Password">
 <br><br>
-<button onclick="login()">LOGIN</button>
+
+<button onclick="login()" class="send-btn">LOGIN</button>
 
 <script type="module">
+
 import {ADMIN_PASSWORD} from "./config.js";
 
-window.login=()=>{
-if(document.getElementById("p").value==ADMIN_PASSWORD){
+window.login = () => {
+
+let pass = document.getElementById("p").value;
+
+if(pass === ADMIN_PASSWORD){
+
 sessionStorage.setItem("admin","ok");
-location="admin.html";
-}else alert("Password errata");
+location = "admin.html";
+
+}else{
+alert("Password errata");
 }
+
+}
+
 </script>
+
+</body>
+</html>
