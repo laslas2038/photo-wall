@@ -30,11 +30,11 @@ SCEGLI FOTO
 
 <script type="module">
 
-import {CLOUD_NAME,UPLOAD_PRESET,FOLDER} from "./config.js";
+import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
 
-let ev = new URLSearchParams(location.search).get("evento");
+let ev = new URLSearchParams(location.search).get("evento") || "evento";
 
-document.getElementById("titolo").innerText = ev || "EVENTO";
+document.getElementById("titolo").innerText = ev.toUpperCase();
 
 window.up = async function(){
 
@@ -51,8 +51,8 @@ let form = new FormData();
 form.append("file", f);
 form.append("upload_preset", UPLOAD_PRESET);
 
-// 🔥 upload in PENDING
-form.append("folder", `${FOLDER}/${ev}/pending`);
+// 🔥 TAG
+form.append("tags", `evento_${ev},pending`);
 
 await fetch(
 `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
