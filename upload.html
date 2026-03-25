@@ -10,7 +10,7 @@
 
 <div class="upload-container">
 
-    <h1 id="titolo">EVENTO</h1>
+    <h1 id="titolo">CARICAMENTO FOTO</h1>
 
     <p class="subtitle">
         CARICA LA TUA FOTO QUI<br>
@@ -30,25 +30,36 @@
 
 <script>
 
-const SERVER = "http://localhost:3001";
+const SERVER = "http://localhost:3001"; // ✅ PORTA GIUSTA
 
-// 🔥 ID CARTELLA DA URL
+// 🔥 ID CARTELLA
 const params = new URLSearchParams(location.search);
 const folderId = params.get("evento");
 
-// 🔥 MOSTRA NOME EVENTO
+// 🔥 DEBUG
+console.log("ID EVENTO:", folderId);
+
+// 🔥 MOSTRA NOME (facoltativo)
 async function loadTitle(){
 
 if(!folderId){
-document.getElementById("titolo").innerText = "EVENTO";
+document.getElementById("titolo").innerText = "EVENTO NON VALIDO";
 return;
 }
 
-let folders = await fetch(SERVER + "/folders").then(r=>r.json());
+try{
+
+let res = await fetch(SERVER + "/folders");
+let folders = await res.json();
 
 let f = folders.find(x => x.id === folderId);
 
 document.getElementById("titolo").innerText = f ? f.name : "EVENTO";
+
+}catch(e){
+console.log("Errore loadTitle:", e);
+document.getElementById("titolo").innerText = "EVENTO";
+}
 
 }
 
@@ -75,10 +86,22 @@ let formData = new FormData();
 formData.append("file", file);
 formData.append("folderId", folderId);
 
-await fetch(SERVER + "/upload", {
+try{
+
+let res = await fetch(SERVER + "/upload", {
 method: "POST",
 body: formData
 });
+
+let data = await res.json();
+
+console.log("UPLOAD OK:", data);
+
+}catch(e){
+console.log("Errore upload:", e);
+alert("Errore durante upload");
+return;
+}
 
 }
 
