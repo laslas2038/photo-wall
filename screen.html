@@ -15,7 +15,7 @@
 
 <script type="module">
 
-import {CLOUD_NAME,FOLDER,TIMER} from "./config.js";
+import {CLOUD_NAME,TIMER} from "./config.js";
 
 let ev = new URLSearchParams(location.search).get("evento");
 document.getElementById("t").innerText = ev;
@@ -28,12 +28,15 @@ async function load(){
 try{
 
 let res = await fetch(
-`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}/${ev}/live.json`
+`https://res.cloudinary.com/${CLOUD_NAME}/image/list/evento_${ev}.json`
 );
 
 let data = await res.json();
 
-immagini = data.resources.map(r =>
+// solo LIVE
+immagini = data.resources
+.filter(r => r.tags.includes("live"))
+.map(r =>
 `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${r.public_id}.jpg`
 );
 
