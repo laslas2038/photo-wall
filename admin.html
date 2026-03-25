@@ -18,6 +18,10 @@
 
 <script type="module">
 
+if(sessionStorage.getItem("admin") !== "ok"){
+location = "admin-login.html";
+}
+
 import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
 
 window.load = async function(){
