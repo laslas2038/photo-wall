@@ -9,7 +9,7 @@
 
 <h1>ADMIN</h1>
 
-<input id="evento" placeholder="nome evento">
+<input id="evento" placeholder="evento">
 <button onclick="load()">CARICA</button>
 
 <hr>
@@ -18,14 +18,14 @@
 
 <script type="module">
 
-import {CLOUD_NAME,FOLDER} from "./config.js";
+import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
 
 window.load = async function(){
 
 let ev = document.getElementById("evento").value;
 
 let res = await fetch(
-`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}/${ev}/pending.json`
+`https://res.cloudinary.com/${CLOUD_NAME}/image/list/evento_${ev}.json`
 );
 
 let data = await res.json();
@@ -33,7 +33,9 @@ let data = await res.json();
 let container = document.getElementById("foto");
 container.innerHTML = "";
 
-data.resources.forEach(r => {
+data.resources
+.filter(r => r.tags.includes("pending"))
+.forEach(r => {
 
 let url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${r.public_id}.jpg`;
 
@@ -41,13 +43,36 @@ let div = document.createElement("div");
 
 div.innerHTML = `
 <img src="${url}" width="200"><br>
-<a href="${url}" target="_blank">APRI</a>
+<button onclick="approva('${url}','${ev}')">APPROVA</button>
 <hr>
 `;
 
 container.appendChild(div);
 
 });
+
+}
+
+window.approva = async function(url, ev){
+
+let res = await fetch(url);
+let blob = await res.blob();
+
+let form = new FormData();
+form.append("file", blob);
+form.append("upload_preset", UPLOAD_PRESET);
+
+// 🔥 RICARICA COME LIVE
+form.append("tags", `evento_${ev},live`);
+
+await fetch(
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+{
+method:"POST",
+body:form
+});
+
+alert("APPROVATA 🔥");
 
 }
 
