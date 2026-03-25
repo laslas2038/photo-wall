@@ -14,15 +14,24 @@
 
 <hr>
 
-<div id="foto"></div>
+<h2>📥 PENDING</h2>
+<div id="pending"></div>
+
+<hr>
+
+<h2>✅ LIVE</h2>
+<div id="live"></div>
 
 <script type="module">
+
+import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
 
 if(sessionStorage.getItem("admin") !== "ok"){
 location = "admin-login.html";
 }
 
-import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
+let nascosti = JSON.parse(localStorage.getItem("nascosti") || "[]");
+let approvati = JSON.parse(localStorage.getItem("approvati") || "[]");
 
 window.load = async function(){
 
@@ -34,30 +43,61 @@ let res = await fetch(
 
 let data = await res.json();
 
-let container = document.getElementById("foto");
-container.innerHTML = "";
+let pendingDiv = document.getElementById("pending");
+let liveDiv = document.getElementById("live");
 
-data.resources
-.filter(r => r.tags.includes("pending"))
-.forEach(r => {
+pendingDiv.innerHTML = "";
+liveDiv.innerHTML = "";
 
-let url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${r.public_id}.jpg`;
+data.resources.forEach(r => {
+
+let id = r.public_id;
+let url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${id}.jpg`;
+
+// ❌ eliminati → non mostrare
+if(nascosti.includes(id)) return;
+
+// 📥 PENDING
+if(r.tags.includes("pending") && !approvati.includes(id)){
 
 let div = document.createElement("div");
 
 div.innerHTML = `
-<img src="${url}" width="200"><br>
-<button onclick="approva('${url}','${ev}')">APPROVA</button>
+<img src="${url}" width="150"><br>
+<button onclick="approva('${url}','${ev}','${id}', this)">APPROVA</button>
+<button onclick="elimina('${id}', this)">ELIMINA</button>
 <hr>
 `;
 
-container.appendChild(div);
+pendingDiv.appendChild(div);
+}
+
+// ✅ LIVE
+if(r.tags.includes("live") || approvati.includes(id)){
+
+let div = document.createElement("div");
+
+div.innerHTML = `
+<img src="${url}" width="150"><br>
+<span style="color:lime">✔ APPROVATA</span>
+<button onclick="elimina('${id}', this)">ELIMINA</button>
+<hr>
+`;
+
+liveDiv.appendChild(div);
+}
 
 });
 
 }
 
-window.approva = async function(url, ev){
+// 🔥 APPROVA
+window.approva = async function(url, ev, id, btn){
+
+btn.disabled = true;
+btn.innerText = "APPROVO...";
+
+try{
 
 let res = await fetch(url);
 let blob = await res.blob();
@@ -65,8 +105,6 @@ let blob = await res.blob();
 let form = new FormData();
 form.append("file", blob);
 form.append("upload_preset", UPLOAD_PRESET);
-
-// 🔥 RICARICA COME LIVE
 form.append("tags", `evento_${ev},live`);
 
 await fetch(
@@ -76,9 +114,38 @@ method:"POST",
 body:form
 });
 
+// salva decisione
+approvati.push(id);
+localStorage.setItem("approvati", JSON.stringify(approvati));
+
 alert("APPROVATA 🔥");
 
+}catch(e){
+alert("Errore approvazione");
+console.log(e);
 }
+
+load();
+
+}
+
+// ❌ ELIMINA (NASCONDE)
+window.elimina = function(id, btn){
+
+btn.disabled = true;
+
+nascosti.push(id);
+localStorage.setItem("nascosti", JSON.stringify(nascosti));
+
+load();
+
+}
+
+// 🔄 refresh automatico ogni 3 sec
+setInterval(() => {
+let ev = document.getElementById("evento").value;
+if(ev) load();
+}, 3000);
 
 </script>
 
