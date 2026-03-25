@@ -10,7 +10,7 @@
 
 <div class="upload-container">
 
-    <h1 id="titolo"></h1>
+    <h1 id="titolo">EVENTO</h1>
 
     <p class="subtitle">
         CARICA LA TUA FOTO QUI<br>
@@ -30,13 +30,13 @@
 
 <script>
 
-let SERVER = "http://localhost:3000";
+const SERVER = "http://localhost:3001";
 
-// 🔥 prendi ID evento da URL
-let params = new URLSearchParams(location.search);
-let folderId = params.get("evento");
+// 🔥 ID CARTELLA DA URL
+const params = new URLSearchParams(location.search);
+const folderId = params.get("evento");
 
-// titolo (lo recuperiamo dal server)
+// 🔥 MOSTRA NOME EVENTO
 async function loadTitle(){
 
 if(!folderId){
@@ -46,14 +46,15 @@ return;
 
 let folders = await fetch(SERVER + "/folders").then(r=>r.json());
 
-let folder = folders.find(f => f.id === folderId);
+let f = folders.find(x => x.id === folderId);
 
-document.getElementById("titolo").innerText = folder ? folder.name : "EVENTO";
+document.getElementById("titolo").innerText = f ? f.name : "EVENTO";
 
 }
 
 loadTitle();
 
+// 🔥 UPLOAD
 async function up(){
 
 let files = document.getElementById("files").files;
@@ -68,14 +69,13 @@ alert("Evento non valido");
 return;
 }
 
-// 🔥 upload diretto nella cartella
-for(let f of files){
+for(let file of files){
 
-let form = new FormData();
-form.append("file", f);
-form.append("folderId", folderId);
+let formData = new FormData();
+formData.append("file", file);
+formData.append("folderId", folderId);
 
-await fetch("http://localhost:3001 + "/upload", {
+await fetch(SERVER + "/upload", {
 method: "POST",
 body: formData
 });
