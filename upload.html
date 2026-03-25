@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Photo Wall</title>
+<title>Upload</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -10,102 +10,60 @@
 
 <div class="upload-container">
 
-    <h1 id="titolo">CARICAMENTO FOTO</h1>
+<h1 id="titolo"></h1>
 
-    <p class="subtitle">
-        CARICA LA TUA FOTO QUI<br>
-        E VEDILA SUL GRANDE SCHERMO
-    </p>
+<p class="subtitle">
+CARICA LA TUA FOTO<br>
+VEDILA SUL MAXI SCHERMO
+</p>
 
-    <label class="upload-btn">
-        SCEGLI FOTO
-        <input type="file" id="files" multiple hidden>
-    </label>
+<label class="upload-btn">
+SCEGLI FOTO
+<input type="file" id="files" multiple hidden>
+</label>
 
-    <br><br>
+<br><br>
 
-    <button onclick="up()" class="send-btn">CARICA</button>
+<button onclick="up()" class="send-btn">CARICA</button>
 
 </div>
 
-<script>
+<script type="module">
 
-const SERVER = "http://localhost:3001"; // ✅ PORTA GIUSTA
+import {CLOUD_NAME,UPLOAD_PRESET,FOLDER} from "./config.js";
 
-// 🔥 ID CARTELLA
-const params = new URLSearchParams(location.search);
-const folderId = params.get("evento");
+let ev = new URLSearchParams(location.search).get("evento");
 
-// 🔥 DEBUG
-console.log("ID EVENTO:", folderId);
+document.getElementById("titolo").innerText = ev || "EVENTO";
 
-// 🔥 MOSTRA NOME (facoltativo)
-async function loadTitle(){
-
-if(!folderId){
-document.getElementById("titolo").innerText = "EVENTO NON VALIDO";
-return;
-}
-
-try{
-
-let res = await fetch(SERVER + "/folders");
-let folders = await res.json();
-
-let f = folders.find(x => x.id === folderId);
-
-document.getElementById("titolo").innerText = f ? f.name : "EVENTO";
-
-}catch(e){
-console.log("Errore loadTitle:", e);
-document.getElementById("titolo").innerText = "EVENTO";
-}
-
-}
-
-loadTitle();
-
-// 🔥 UPLOAD
-async function up(){
+window.up = async function(){
 
 let files = document.getElementById("files").files;
 
 if(files.length === 0){
-alert("Seleziona una foto");
+alert("Seleziona foto");
 return;
 }
 
-if(!folderId){
-alert("Evento non valido");
-return;
-}
+for(let f of files){
 
-for(let file of files){
+let form = new FormData();
+form.append("file", f);
+form.append("upload_preset", UPLOAD_PRESET);
 
-let formData = new FormData();
-formData.append("file", file);
-formData.append("folderId", folderId);
+// 🔥 upload in PENDING
+form.append("folder", `${FOLDER}/${ev}/pending`);
 
-try{
-
-let res = await fetch(SERVER + "/upload", {
-method: "POST",
-body: formData
+await fetch(
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+{
+method:"POST",
+body:form
 });
 
-let data = await res.json();
-
-console.log("UPLOAD OK:", data);
-
-}catch(e){
-console.log("Errore upload:", e);
-alert("Errore durante upload");
-return;
 }
 
-}
-
-alert("Foto caricate su Drive 🔥");
+alert("Caricato 🔥");
 
 }
 
