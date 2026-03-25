@@ -10,39 +10,55 @@
 <div class="title" id="t"></div>
 
 <div id="screen">
-    <img id="img">
+<img id="img">
 </div>
 
 <script type="module">
 
-import {getDB} from "./db.js";
-import {TIMER} from "./config.js";
+import {CLOUD_NAME,FOLDER,TIMER} from "./config.js";
 
-let ev=new URLSearchParams(location.search).get("evento");
-document.getElementById("t").innerText=ev;
+let ev = new URLSearchParams(location.search).get("evento");
+document.getElementById("t").innerText = ev;
 
+let immagini = [];
 let index = 0;
 
-function loop(){
+async function load(){
 
-let db = getDB();
+try{
 
-let arr = (db.eventi[ev]?.foto || []).filter(f=>f.approvata);
+let res = await fetch(
+`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}/${ev}/live.json`
+);
 
-if(arr.length == 0){
+let data = await res.json();
+
+immagini = data.resources.map(r =>
+`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${r.public_id}.jpg`
+);
+
+}catch(e){
+console.log("Errore load", e);
+}
+
+}
+
+async function loop(){
+
+if(immagini.length === 0){
+await load();
 setTimeout(loop,TIMER);
 return;
 }
 
-if(index >= arr.length) index = 0;
+if(index >= immagini.length) index = 0;
 
-let foto = arr[index];
+let url = immagini[index].replace(
+"/upload/",
+"/upload/c_fill,w_1920,h_1080,g_auto/"
+);
 
-let fixed = foto.url.includes("/upload/")
-? foto.url.replace("/upload/","/upload/c_fill,w_1920,h_1080,g_auto/")
-: foto.url;
-
-document.getElementById("img").src = fixed;
+document.getElementById("img").src = url;
 
 index++;
 
@@ -50,6 +66,7 @@ setTimeout(loop,TIMER);
 
 }
 
+load();
 loop();
 
 </script>
