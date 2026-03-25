@@ -15,18 +15,18 @@
 
 <button onclick="login()" class="send-btn">LOGIN</button>
 
-<script type="module">
+<script>
 
-import {ADMIN_PASSWORD} from "./config.js";
+const ADMIN_PASSWORD = "laslas2000"; // 🔥 diretto
 
-window.login = () => {
+function login(){
 
 let pass = document.getElementById("p").value;
 
 if(pass === ADMIN_PASSWORD){
 
 sessionStorage.setItem("admin","ok");
-location = "admin.html";
+window.location.href = "admin.html";
 
 }else{
 alert("Password errata");
