@@ -9,104 +9,39 @@
 
 <h1>ADMIN</h1>
 
-<input id="newEvento" placeholder="Nuovo evento">
-<button onclick="creaEvento()">CREA EVENTO</button>
+<input id="evento" placeholder="nome evento">
+<button onclick="load()">CARICA</button>
 
 <hr>
 
-<h2>EVENTI</h2>
-<div id="listaEventi"></div>
-
-<hr>
-
-<h2>FOTO EVENTO</h2>
 <div id="foto"></div>
 
 <script type="module">
 
-import {getDB,saveDB} from "./db.js";
+import {CLOUD_NAME,FOLDER} from "./config.js";
 
-let currentEvento = null;
+window.load = async function(){
 
-function renderEventi(){
+let ev = document.getElementById("evento").value;
 
-let db = getDB();
-let container = document.getElementById("listaEventi");
-container.innerHTML = "";
+let res = await fetch(
+`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}/${ev}/pending.json`
+);
 
-Object.keys(db.eventi).forEach(ev => {
-
-let div = document.createElement("div");
-
-div.innerHTML = `
-<b onclick="seleziona('${ev}')" style="cursor:pointer">${db.eventi[ev].nome}</b>
-<button onclick="eliminaEvento('${ev}')">ELIMINA</button>
-`;
-
-container.appendChild(div);
-
-});
-
-}
-
-window.creaEvento = function(){
-
-let nome = document.getElementById("newEvento").value.trim();
-
-if(!nome) return;
-
-let db = getDB();
-
-db.eventi[nome] = {
-nome: nome.toUpperCase(),
-foto: []
-};
-
-saveDB(db);
-renderEventi();
-
-}
-
-window.eliminaEvento = function(ev){
-
-let db = getDB();
-
-delete db.eventi[ev];
-
-saveDB(db);
-
-currentEvento = null;
-
-renderEventi();
-document.getElementById("foto").innerHTML = "";
-
-}
-
-window.seleziona = function(ev){
-currentEvento = ev;
-renderFoto();
-}
-
-function renderFoto(){
-
-let db = getDB();
+let data = await res.json();
 
 let container = document.getElementById("foto");
 container.innerHTML = "";
 
-if(!currentEvento || !db.eventi[currentEvento]) return;
+data.resources.forEach(r => {
 
-let evento = db.eventi[currentEvento];
-
-evento.foto.forEach((f,i)=>{
+let url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${r.public_id}.jpg`;
 
 let div = document.createElement("div");
 
 div.innerHTML = `
-<img src="${f.url}" width="150">
-<br>
-<button onclick="approva(${i})">APPROVA</button>
-<button onclick="elimina(${i})">ELIMINA</button>
+<img src="${url}" width="200"><br>
+<a href="${url}" target="_blank">APRI</a>
 <hr>
 `;
 
@@ -115,32 +50,6 @@ container.appendChild(div);
 });
 
 }
-
-window.approva = function(i){
-
-let db = getDB();
-
-db.eventi[currentEvento].foto[i].approvata = true;
-
-saveDB(db);
-
-renderFoto();
-
-}
-
-window.elimina = function(i){
-
-let db = getDB();
-
-db.eventi[currentEvento].foto.splice(i,1);
-
-saveDB(db);
-
-renderFoto();
-
-}
-
-renderEventi();
 
 </script>
 
