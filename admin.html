@@ -7,7 +7,7 @@
 
 <body>
 
-<h1 id="titolo"></h1>
+<h1>ADMIN LAS</h1>
 
 <hr>
 
@@ -27,19 +27,10 @@ if(sessionStorage.getItem("admin") !== "ok"){
 location = "admin-login.html";
 }
 
-// 🔥 evento automatico da URL
-let ev = new URLSearchParams(location.search).get("evento");
-
-if(!ev){
-alert("Evento mancante nell'URL");
-throw "no event";
-}
-
-document.getElementById("titolo").innerText = "EVENTO: " + ev;
+const ev = "LAS";
 
 let nascosti = JSON.parse(localStorage.getItem("nascosti") || "[]");
 
-// 🔥 LOAD
 async function load(){
 
 let res = await fetch(
@@ -61,50 +52,35 @@ let url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${id}.jpg`;
 
 if(nascosti.includes(id)) return;
 
-// 📥 PENDING
 if(r.tags.includes("pending")){
 
-let div = document.createElement("div");
-
-div.innerHTML = `
+pendingDiv.innerHTML += `
 <img src="${url}" width="150"><br>
-<button onclick="approva('${url}','${ev}', this)">APPROVA</button>
-<button onclick="elimina('${id}', this)">ELIMINA</button>
+<button onclick="approva('${url}')">APPROVA</button>
+<button onclick="elimina('${id}')">ELIMINA</button>
 <hr>
 `;
 
-pendingDiv.appendChild(div);
 }
 
-// ✅ LIVE
 if(r.tags.includes("live")){
 
-let div = document.createElement("div");
-
-div.innerHTML = `
+liveDiv.innerHTML += `
 <img src="${url}" width="150"><br>
 <span style="color:lime">✔ APPROVATA</span>
-<button onclick="elimina('${id}', this)">ELIMINA</button>
+<button onclick="elimina('${id}')">ELIMINA</button>
 <hr>
 `;
 
-liveDiv.appendChild(div);
 }
 
 });
 
 }
 
-// 🔥 APPROVA
-window.approva = async function(url, ev, btn){
+window.approva = async function(url){
 
-btn.disabled = true;
-btn.innerText = "APPROVO...";
-
-try{
-
-let res = await fetch(url);
-let blob = await res.blob();
+let blob = await fetch(url).then(r=>r.blob());
 
 let form = new FormData();
 form.append("file", blob);
@@ -118,21 +94,11 @@ method:"POST",
 body:form
 });
 
-alert("APPROVATA 🔥");
-
-}catch(e){
-alert("Errore");
-console.log(e);
-}
-
 load();
 
 }
 
-// ❌ ELIMINA
-window.elimina = function(id, btn){
-
-btn.disabled = true;
+window.elimina = function(id){
 
 nascosti.push(id);
 localStorage.setItem("nascosti", JSON.stringify(nascosti));
@@ -141,9 +107,7 @@ load();
 
 }
 
-// 🔄 AUTO REFRESH
-setInterval(load, 3000);
-
+setInterval(load,3000);
 load();
 
 </script>
