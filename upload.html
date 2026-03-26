@@ -29,7 +29,6 @@ VEDILA SUL MAXI SCHERMO
 
 <br>
 
-<!-- 🔥 PROGRESS BAR -->
 <div id="progressBox">
 <div id="progressBar"></div>
 </div>
@@ -83,7 +82,7 @@ reader.readAsDataURL(file);
 
 });
 
-// 🚀 UPLOAD CON PROGRESS
+// 🚀 UPLOAD MIGLIORATO
 window.up = async function(){
 
 if(selectedFiles.length === 0){
@@ -92,6 +91,14 @@ return;
 }
 
 let bar = document.getElementById("progressBar");
+let btn = document.querySelector(".send-btn");
+
+btn.innerText = "CARICAMENTO...";
+btn.disabled = true;
+
+// reset barra
+bar.style.width = "0%";
+bar.style.background = "red";
 
 let totale = selectedFiles.length;
 let count = 0;
@@ -114,34 +121,66 @@ body:form
 
 let data = await res.json();
 
-// ❌ errore Cloudinary
 if(data.error){
 console.log(data.error);
 alert("Errore upload");
+btn.innerText = "CARICA";
+btn.disabled = false;
 return;
 }
 
+// 🔥 PROGRESS
 count++;
+
 let percent = Math.round((count / totale) * 100);
+
+// forza aggiornamento visivo (importantissimo)
+await new Promise(r => setTimeout(r, 150));
+
 bar.style.width = percent + "%";
+
+// 🔥 COLORI DINAMICI
+if(percent < 50){
+bar.style.background = "red";
+}
+else if(percent < 90){
+bar.style.background = "orange";
+}
+else{
+bar.style.background = "lime";
+}
 
 }catch(e){
 console.log(e);
 alert("Errore connessione");
+btn.innerText = "CARICA";
+btn.disabled = false;
 return;
 }
 
 }
 
+// ✅ COMPLETATO
+btn.innerText = "CARICATO ✔";
+
+setTimeout(() => {
+
 alert("Caricato 🔥");
 
-// reset
+// reset UI
 document.getElementById("preview").innerHTML = "";
 document.getElementById("files").value = "";
 document.getElementById("counter").innerText = "";
+
 bar.style.width = "0%";
+bar.style.background = "magenta";
+
+btn.innerText = "CARICA";
+btn.disabled = false;
 
 selectedFiles = [];
+
+}, 800);
 
 }
 
