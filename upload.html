@@ -10,7 +10,7 @@
 
 <div class="upload-container">
 
-<h1 id="titolo"></h1>
+<h1 id="titolo">LAS</h1>
 
 <p class="subtitle">
 CARICA LA TUA FOTO<br>
@@ -43,12 +43,10 @@ VEDILA SUL MAXI SCHERMO
 
 import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
 
-let ev = new URLSearchParams(location.search).get("evento") || "evento";
-document.getElementById("titolo").innerText = ev.toUpperCase();
+const ev = "LAS";
 
 let selectedFiles = [];
 
-// 📸 ANTEPRIMA
 document.getElementById("files").addEventListener("change", function(e){
 
 let preview = document.getElementById("preview");
@@ -82,7 +80,6 @@ reader.readAsDataURL(file);
 
 });
 
-// 🚀 UPLOAD MIGLIORATO
 window.up = async function(){
 
 if(selectedFiles.length === 0){
@@ -96,91 +93,35 @@ let btn = document.querySelector(".send-btn");
 btn.innerText = "CARICAMENTO...";
 btn.disabled = true;
 
-// reset barra
 bar.style.width = "0%";
-bar.style.background = "red";
 
 let totale = selectedFiles.length;
 let count = 0;
 
 for(let f of selectedFiles){
 
-try{
-
 let form = new FormData();
 form.append("file", f);
 form.append("upload_preset", UPLOAD_PRESET);
 form.append("tags", `evento_${ev},pending`);
 
-let res = await fetch(
+await fetch(
 `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
 {
 method:"POST",
 body:form
 });
 
-let data = await res.json();
-
-if(data.error){
-console.log(data.error);
-alert("Errore upload");
-btn.innerText = "CARICA";
-btn.disabled = false;
-return;
-}
-
-// 🔥 PROGRESS
 count++;
-
 let percent = Math.round((count / totale) * 100);
-
-// forza aggiornamento visivo (importantissimo)
-await new Promise(r => setTimeout(r, 150));
 
 bar.style.width = percent + "%";
 
-// 🔥 COLORI DINAMICI
-if(percent < 50){
-bar.style.background = "red";
 }
-else if(percent < 90){
-bar.style.background = "orange";
-}
-else{
-bar.style.background = "lime";
-}
-
-}catch(e){
-console.log(e);
-alert("Errore connessione");
-btn.innerText = "CARICA";
-btn.disabled = false;
-return;
-}
-
-}
-
-// ✅ COMPLETATO
-btn.innerText = "CARICATO ✔";
-
-setTimeout(() => {
 
 alert("Caricato 🔥");
 
-// reset UI
-document.getElementById("preview").innerHTML = "";
-document.getElementById("files").value = "";
-document.getElementById("counter").innerText = "";
-
-bar.style.width = "0%";
-bar.style.background = "magenta";
-
-btn.innerText = "CARICA";
-btn.disabled = false;
-
-selectedFiles = [];
-
-}, 800);
+location.reload();
 
 }
 
