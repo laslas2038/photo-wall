@@ -9,9 +9,6 @@
 
 <h1>ADMIN</h1>
 
-<input id="evento" placeholder="evento">
-<button onclick="load()">CARICA</button>
-
 <hr>
 
 <h2>📥 PENDING</h2>
@@ -19,7 +16,7 @@
 
 <hr>
 
-<h2>✅ LIVE</h2>
+<h2>✅ APPROVATE</h2>
 <div id="live"></div>
 
 <script type="module">
@@ -31,14 +28,12 @@ location = "admin-login.html";
 }
 
 let nascosti = JSON.parse(localStorage.getItem("nascosti") || "[]");
-let approvati = JSON.parse(localStorage.getItem("approvati") || "[]");
 
-window.load = async function(){
-
-let ev = document.getElementById("evento").value;
+// 🔥 CARICA TUTTO
+async function load(){
 
 let res = await fetch(
-`https://res.cloudinary.com/${CLOUD_NAME}/image/list/evento_${ev}.json`
+`https://res.cloudinary.com/${CLOUD_NAME}/image/list/all.json`
 );
 
 let data = await res.json();
@@ -54,17 +49,17 @@ data.resources.forEach(r => {
 let id = r.public_id;
 let url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${id}.jpg`;
 
-// ❌ eliminati → non mostrare
+// ❌ nascosti
 if(nascosti.includes(id)) return;
 
 // 📥 PENDING
-if(r.tags.includes("pending") && !approvati.includes(id)){
+if(r.tags.includes("pending")){
 
 let div = document.createElement("div");
 
 div.innerHTML = `
 <img src="${url}" width="150"><br>
-<button onclick="approva('${url}','${ev}','${id}', this)">APPROVA</button>
+<button onclick="approva('${url}','${id}', this)">APPROVA</button>
 <button onclick="elimina('${id}', this)">ELIMINA</button>
 <hr>
 `;
@@ -73,7 +68,7 @@ pendingDiv.appendChild(div);
 }
 
 // ✅ LIVE
-if(r.tags.includes("live") || approvati.includes(id)){
+if(r.tags.includes("live")){
 
 let div = document.createElement("div");
 
@@ -92,7 +87,7 @@ liveDiv.appendChild(div);
 }
 
 // 🔥 APPROVA
-window.approva = async function(url, ev, id, btn){
+window.approva = async function(url, id, btn){
 
 btn.disabled = true;
 btn.innerText = "APPROVO...";
@@ -105,7 +100,9 @@ let blob = await res.blob();
 let form = new FormData();
 form.append("file", blob);
 form.append("upload_preset", UPLOAD_PRESET);
-form.append("tags", `evento_${ev},live`);
+
+// 👉 NON serve evento qui
+form.append("tags", `live`);
 
 await fetch(
 `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
@@ -114,14 +111,10 @@ method:"POST",
 body:form
 });
 
-// salva decisione
-approvati.push(id);
-localStorage.setItem("approvati", JSON.stringify(approvati));
-
 alert("APPROVATA 🔥");
 
 }catch(e){
-alert("Errore approvazione");
+alert("Errore");
 console.log(e);
 }
 
@@ -129,7 +122,7 @@ load();
 
 }
 
-// ❌ ELIMINA (NASCONDE)
+// ❌ ELIMINA
 window.elimina = function(id, btn){
 
 btn.disabled = true;
@@ -141,11 +134,10 @@ load();
 
 }
 
-// 🔄 refresh automatico ogni 3 sec
-setInterval(() => {
-let ev = document.getElementById("evento").value;
-if(ev) load();
-}, 3000);
+// 🔄 AUTO REFRESH
+setInterval(load, 3000);
+
+load();
 
 </script>
 
