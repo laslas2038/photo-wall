@@ -17,12 +17,15 @@ CARICA LA TUA FOTO<br>
 VEDILA SUL MAXI SCHERMO
 </p>
 
-<label class="upload-btn">
-SCEGLI FOTO
-<input type="file" id="files" multiple hidden>
-</label>
+<!-- 🔥 INPUT FILE -->
+<input type="file" id="files" multiple accept="image/*">
 
 <br><br>
+
+<!-- 🔥 ANTEPRIME -->
+<div id="preview"></div>
+
+<br>
 
 <button onclick="up()" class="send-btn">CARICA</button>
 
@@ -36,22 +39,51 @@ let ev = new URLSearchParams(location.search).get("evento") || "evento";
 
 document.getElementById("titolo").innerText = ev.toUpperCase();
 
+let selectedFiles = [];
+
+// 🔥 ANTEPRIMA LIVE
+document.getElementById("files").addEventListener("change", function(e){
+
+let preview = document.getElementById("preview");
+preview.innerHTML = "";
+
+selectedFiles = Array.from(e.target.files);
+
+selectedFiles.forEach(file => {
+
+let reader = new FileReader();
+
+reader.onload = function(e){
+
+let img = document.createElement("img");
+img.src = e.target.result;
+img.style.width = "100px";
+img.style.margin = "5px";
+img.style.borderRadius = "10px";
+
+preview.appendChild(img);
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
+});
+
+// 🔥 UPLOAD
 window.up = async function(){
 
-let files = document.getElementById("files").files;
-
-if(files.length === 0){
+if(selectedFiles.length === 0){
 alert("Seleziona foto");
 return;
 }
 
-for(let f of files){
+for(let f of selectedFiles){
 
 let form = new FormData();
 form.append("file", f);
 form.append("upload_preset", UPLOAD_PRESET);
-
-// 🔥 TAG
 form.append("tags", `evento_${ev},pending`);
 
 await fetch(
@@ -64,6 +96,11 @@ body:form
 }
 
 alert("Caricato 🔥");
+
+// 🔥 reset UI
+document.getElementById("preview").innerHTML = "";
+document.getElementById("files").value = "";
+selectedFiles = [];
 
 }
 
