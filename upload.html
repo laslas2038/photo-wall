@@ -17,13 +17,22 @@ CARICA LA TUA FOTO<br>
 VEDILA SUL MAXI SCHERMO
 </p>
 
-<!-- 🔥 INPUT FILE -->
 <input type="file" id="files" multiple accept="image/*">
 
-<br><br>
+<br>
 
-<!-- 🔥 ANTEPRIME -->
+<div id="counter"></div>
+
+<br>
+
 <div id="preview"></div>
+
+<br>
+
+<!-- 🔥 PROGRESS BAR -->
+<div id="progressBox">
+<div id="progressBar"></div>
+</div>
 
 <br>
 
@@ -36,18 +45,21 @@ VEDILA SUL MAXI SCHERMO
 import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
 
 let ev = new URLSearchParams(location.search).get("evento") || "evento";
-
 document.getElementById("titolo").innerText = ev.toUpperCase();
 
 let selectedFiles = [];
 
-// 🔥 ANTEPRIMA LIVE
+// 📸 ANTEPRIMA
 document.getElementById("files").addEventListener("change", function(e){
 
 let preview = document.getElementById("preview");
+let counter = document.getElementById("counter");
+
 preview.innerHTML = "";
 
 selectedFiles = Array.from(e.target.files);
+
+counter.innerText = selectedFiles.length + " foto selezionate";
 
 selectedFiles.forEach(file => {
 
@@ -57,7 +69,7 @@ reader.onload = function(e){
 
 let img = document.createElement("img");
 img.src = e.target.result;
-img.style.width = "100px";
+img.style.width = "90px";
 img.style.margin = "5px";
 img.style.borderRadius = "10px";
 
@@ -71,7 +83,7 @@ reader.readAsDataURL(file);
 
 });
 
-// 🔥 UPLOAD
+// 🚀 UPLOAD CON PROGRESS
 window.up = async function(){
 
 if(selectedFiles.length === 0){
@@ -79,27 +91,56 @@ alert("Seleziona foto");
 return;
 }
 
+let bar = document.getElementById("progressBar");
+
+let totale = selectedFiles.length;
+let count = 0;
+
 for(let f of selectedFiles){
+
+try{
 
 let form = new FormData();
 form.append("file", f);
 form.append("upload_preset", UPLOAD_PRESET);
 form.append("tags", `evento_${ev},pending`);
 
-await fetch(
+let res = await fetch(
 `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
 {
 method:"POST",
 body:form
 });
 
+let data = await res.json();
+
+// ❌ errore Cloudinary
+if(data.error){
+console.log(data.error);
+alert("Errore upload");
+return;
+}
+
+count++;
+let percent = Math.round((count / totale) * 100);
+bar.style.width = percent + "%";
+
+}catch(e){
+console.log(e);
+alert("Errore connessione");
+return;
+}
+
 }
 
 alert("Caricato 🔥");
 
-// 🔥 reset UI
+// reset
 document.getElementById("preview").innerHTML = "";
 document.getElementById("files").value = "";
+document.getElementById("counter").innerText = "";
+bar.style.width = "0%";
+
 selectedFiles = [];
 
 }
