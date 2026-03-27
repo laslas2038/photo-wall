@@ -3,25 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css">
-
-<style>
-#pending img, #live img{
-width:200px;
-border-radius:12px;
-margin:10px;
-}
-
-button{
-padding:15px 25px;
-font-size:18px;
-margin:5px;
-}
-
-#pending div, #live div{
-margin-bottom:20px;
-}
-</style>
-
 </head>
 
 <body>
@@ -31,101 +12,83 @@ margin-bottom:20px;
 <hr>
 
 <h2>📥 PENDING</h2>
-<div id="pending"></div>
+<div id="pending" class="grid-admin"></div>
 
 <hr>
 
 <h2>✅ APPROVATE</h2>
-<div id="live"></div>
+<div id="live" class="grid-admin"></div>
 
-<script>
+<script type="module">
+
+import {firebaseConfig,EVENTO} from "./config.js";
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 if(sessionStorage.getItem("admin") !== "ok"){
 location = "admin-login.html";
 }
 
-// 🔥 STORAGE
-let pending = JSON.parse(localStorage.getItem("pending") || "[]");
-let live = JSON.parse(localStorage.getItem("live") || []);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// 🔥 DEBUG AUTO CARICAMENTO
-if(pending.length === 0){
-alert("⚠️ Nessuna foto pending.\nApri upload e carica qualcosa");
+const pendingDiv = document.getElementById("pending");
+const liveDiv = document.getElementById("live");
+
+// 🔥 REALTIME
+onSnapshot(collection(db, "eventi", EVENTO, "foto"), (snapshot) => {
+
+pendingDiv.innerHTML = "";
+liveDiv.innerHTML = "";
+
+snapshot.forEach(d => {
+
+let data = d.data();
+let id = d.id;
+
+let html = `
+<div class="card">
+<img src="${data.url}">
+<br>
+`;
+
+if(data.stato === "pending"){
+html += `
+<button class="approve" onclick="approva('${id}')">APPROVA</button>
+<button class="delete" onclick="elimina('${id}')">ELIMINA</button>
+`;
+pendingDiv.innerHTML += html + "</div>";
 }
 
-// 🔥 RENDER
-function render(){
-
-let pDiv = document.getElementById("pending");
-let lDiv = document.getElementById("live");
-
-pDiv.innerHTML = "";
-lDiv.innerHTML = "";
-
-// 📥 PENDING
-pending.forEach((url,i)=>{
-
-pDiv.innerHTML += `
-<div>
-<img src="${url}">
+if(data.stato === "live"){
+html += `
+<span class="ok">✔ APPROVATA</span>
 <br>
-<button onclick="approva(${i})">APPROVA</button>
-<button onclick="eliminaPending(${i})">ELIMINA</button>
-</div>
+<button class="delete" onclick="elimina('${id}')">ELIMINA</button>
 `;
+liveDiv.innerHTML += html + "</div>";
+}
 
 });
 
-// ✅ LIVE
-live.forEach((url,i)=>{
-
-lDiv.innerHTML += `
-<div>
-<img src="${url}">
-<br>
-<span style="color:lime">✔ APPROVATA</span>
-<button onclick="eliminaLive(${i})">ELIMINA</button>
-</div>
-`;
-
 });
 
+// ✅ APPROVA
+window.approva = async function(id){
+await updateDoc(doc(db, "eventi", EVENTO, "foto", id), {
+stato: "live"
+});
 }
 
-// 🔥 APPROVA
-function approva(i){
+// ❌ ELIMINA VERO
+window.elimina = async function(id){
 
-live.push(pending[i]);
-pending.splice(i,1);
+if(!confirm("Eliminare foto?")) return;
 
-save();
-render();
+await deleteDoc(doc(db, "eventi", EVENTO, "foto", id));
 
 }
-
-// ❌ ELIMINA
-function eliminaPending(i){
-pending.splice(i,1);
-save();
-render();
-}
-
-function eliminaLive(i){
-live.splice(i,1);
-save();
-render();
-}
-
-// 💾 SAVE
-function save(){
-localStorage.setItem("pending", JSON.stringify(pending));
-localStorage.setItem("live", JSON.stringify(live));
-}
-
-// 🔄 LOOP
-setInterval(render,2000);
-
-render();
 
 </script>
 
