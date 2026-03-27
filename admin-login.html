@@ -16,24 +16,18 @@
 <button onclick="login()" class="send-btn">LOGIN</button>
 
 <script>
-
-const ADMIN_PASSWORD = "laslas2000"; // 🔥 diretto
+const ADMIN_PASSWORD = "laslas2000";
 
 function login(){
-
 let pass = document.getElementById("p").value;
 
 if(pass === ADMIN_PASSWORD){
-
 sessionStorage.setItem("admin","ok");
-window.location.href = "admin.html";
-
+location = "admin.html";
 }else{
 alert("Password errata");
 }
-
 }
-
 </script>
 
 </body>
