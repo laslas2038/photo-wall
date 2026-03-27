@@ -3,13 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css">
-
-<style>
-#img{
-transition: all 1s ease;
-}
-</style>
-
 </head>
 
 <body>
@@ -20,15 +13,31 @@ transition: all 1s ease;
 <img id="img">
 </div>
 
-<script>
+<script type="module">
 
-let immagini = JSON.parse(localStorage.getItem("live") || "[]");
+import {firebaseConfig,EVENTO,TIMER} from "./config.js";
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let immagini = [];
 let index = 0;
 
-function loop(){
+onSnapshot(collection(db, "eventi", EVENTO, "foto"), (snapshot) => {
 
-immagini = JSON.parse(localStorage.getItem("live") || "[]");
+immagini = [];
+
+snapshot.forEach(d => {
+let data = d.data();
+if(data.stato === "live") immagini.push(data.url);
+});
+
+});
+
+function loop(){
 
 if(immagini.length === 0){
 setTimeout(loop,2000);
@@ -39,18 +48,19 @@ if(index >= immagini.length) index = 0;
 
 let img = document.getElementById("img");
 
-img.style.opacity = 0;
+img.classList.add("hide");
 
 setTimeout(()=>{
 
 img.src = immagini[index];
-img.style.opacity = 1;
+img.classList.remove("hide");
+img.classList.add("show");
 
 index++;
 
-},300);
+},400);
 
-setTimeout(loop,3000);
+setTimeout(loop,TIMER);
 
 }
 
