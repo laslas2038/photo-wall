@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css">
+
+<style>
+#img{
+transition: all 1s ease;
+}
+</style>
+
 </head>
 
 <body>
@@ -13,50 +20,40 @@
 <img id="img">
 </div>
 
-<script type="module">
+<script>
 
-import {CLOUD_NAME,TIMER} from "./config.js";
+let immagini = JSON.parse(localStorage.getItem("live") || "[]");
 
-const ev = "LAS";
-
-let immagini = [];
 let index = 0;
 
-async function load(){
+function loop(){
 
-let res = await fetch(
-`https://res.cloudinary.com/${CLOUD_NAME}/image/list/evento_${ev}.json`
-);
-
-let data = await res.json();
-
-immagini = data.resources
-.filter(r => r.tags.includes("live"))
-.map(r =>
-`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${r.public_id}.jpg`
-);
-
-}
-
-async function loop(){
+immagini = JSON.parse(localStorage.getItem("live") || "[]");
 
 if(immagini.length === 0){
-await load();
-setTimeout(loop,TIMER);
+setTimeout(loop,2000);
 return;
 }
 
 if(index >= immagini.length) index = 0;
 
-document.getElementById("img").src = immagini[index];
+let img = document.getElementById("img");
+
+img.style.opacity = 0;
+
+setTimeout(()=>{
+
+img.src = immagini[index];
+img.style.opacity = 1;
 
 index++;
 
-setTimeout(loop,TIMER);
+},300);
+
+setTimeout(loop,3000);
 
 }
 
-load();
 loop();
 
 </script>
