@@ -10,7 +10,7 @@
 
 <div class="upload-container">
 
-<h1 id="titolo">LAS</h1>
+<h1>LAS</h1>
 
 <p class="subtitle">
 CARICA LA TUA FOTO<br>
@@ -20,9 +20,7 @@ VEDILA SUL MAXI SCHERMO
 <input type="file" id="files" multiple accept="image/*">
 
 <br>
-
 <div id="counter"></div>
-
 <br>
 
 <div id="preview"></div>
@@ -41,14 +39,17 @@ VEDILA SUL MAXI SCHERMO
 
 <script type="module">
 
-import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
+import {CLOUD_NAME,UPLOAD_PRESET,EVENTO,firebaseConfig} from "./config.js";
 
-const ev = "LAS";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 let selectedFiles = [];
 
-// 📸 ANTEPRIMA
-document.getElementById("files").addEventListener("change", function(e){
+document.getElementById("files").addEventListener("change", e => {
 
 let preview = document.getElementById("preview");
 let counter = document.getElementById("counter");
@@ -63,13 +64,11 @@ selectedFiles.forEach(file => {
 
 let reader = new FileReader();
 
-reader.onload = function(e){
+reader.onload = e => {
 
 let img = document.createElement("img");
 img.src = e.target.result;
-img.style.width = "90px";
-img.style.margin = "5px";
-img.style.borderRadius = "10px";
+img.className = "preview-img";
 
 preview.appendChild(img);
 
@@ -95,22 +94,14 @@ let btn = document.querySelector(".send-btn");
 btn.innerText = "CARICAMENTO...";
 btn.disabled = true;
 
-bar.style.width = "0%";
-
 let totale = selectedFiles.length;
 let count = 0;
 
-// 🔥 recupera pending attuale
-let pending = JSON.parse(localStorage.getItem("pending") || "[]");
-
 for(let f of selectedFiles){
-
-try{
 
 let form = new FormData();
 form.append("file", f);
 form.append("upload_preset", UPLOAD_PRESET);
-form.append("tags", `evento_${ev},pending`);
 
 let res = await fetch(
 `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
@@ -121,59 +112,24 @@ body:form
 
 let data = await res.json();
 
-// ❌ errore cloudinary
-if(data.error){
-console.log(data.error);
-alert("Errore upload");
-btn.innerText = "CARICA";
-btn.disabled = false;
-return;
-}
+// 🔥 salva su firebase
+await addDoc(collection(db, "eventi", EVENTO, "foto"), {
+url: data.secure_url,
+stato: "pending",
+created: Date.now()
+});
 
-// 🔥 SALVA URL
-pending.push(data.secure_url);
-
-// 🔥 progress
+// progress
 count++;
-let percent = Math.round((count / totale) * 100);
-bar.style.width = percent + "%";
+bar.style.width = Math.round((count/totale)*100) + "%";
 
-// piccolo delay per animazione fluida
-await new Promise(r => setTimeout(r, 120));
-
-}catch(e){
-console.log(e);
-alert("Errore connessione");
-btn.innerText = "CARICA";
-btn.disabled = false;
-return;
-}
+await new Promise(r => setTimeout(r,100));
 
 }
 
-// 💾 salva tutto
-localStorage.setItem("pending", JSON.stringify(pending));
-
-// ✅ fine
 btn.innerText = "CARICATO ✔";
 
-setTimeout(() => {
-
-alert("Caricato 🔥");
-
-// reset UI
-document.getElementById("preview").innerHTML = "";
-document.getElementById("files").value = "";
-document.getElementById("counter").innerText = "";
-
-bar.style.width = "0%";
-
-btn.innerText = "CARICA";
-btn.disabled = false;
-
-selectedFiles = [];
-
-}, 800);
+setTimeout(()=> location.reload(), 800);
 
 }
 
