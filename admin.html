@@ -3,6 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css">
+
+<style>
+#pending img, #live img{
+width:200px;
+border-radius:12px;
+margin:10px;
+}
+
+button{
+padding:15px 25px;
+font-size:18px;
+margin:5px;
+}
+
+#pending div, #live div{
+margin-bottom:20px;
+}
+</style>
+
 </head>
 
 <body>
@@ -19,96 +38,94 @@
 <h2>✅ APPROVATE</h2>
 <div id="live"></div>
 
-<script type="module">
-
-import {CLOUD_NAME,UPLOAD_PRESET} from "./config.js";
+<script>
 
 if(sessionStorage.getItem("admin") !== "ok"){
 location = "admin-login.html";
 }
 
-const ev = "LAS";
+// 🔥 STORAGE
+let pending = JSON.parse(localStorage.getItem("pending") || "[]");
+let live = JSON.parse(localStorage.getItem("live") || []);
 
-let nascosti = JSON.parse(localStorage.getItem("nascosti") || "[]");
-
-async function load(){
-
-let res = await fetch(
-`https://res.cloudinary.com/${CLOUD_NAME}/image/list/evento_${ev}.json`
-);
-
-let data = await res.json();
-
-let pendingDiv = document.getElementById("pending");
-let liveDiv = document.getElementById("live");
-
-pendingDiv.innerHTML = "";
-liveDiv.innerHTML = "";
-
-data.resources.forEach(r => {
-
-let id = r.public_id;
-let url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${id}.jpg`;
-
-if(nascosti.includes(id)) return;
-
-if(r.tags.includes("pending")){
-
-pendingDiv.innerHTML += `
-<img src="${url}" width="150"><br>
-<button onclick="approva('${url}')">APPROVA</button>
-<button onclick="elimina('${id}')">ELIMINA</button>
-<hr>
-`;
-
+// 🔥 DEBUG AUTO CARICAMENTO
+if(pending.length === 0){
+alert("⚠️ Nessuna foto pending.\nApri upload e carica qualcosa");
 }
 
-if(r.tags.includes("live")){
+// 🔥 RENDER
+function render(){
 
-liveDiv.innerHTML += `
-<img src="${url}" width="150"><br>
+let pDiv = document.getElementById("pending");
+let lDiv = document.getElementById("live");
+
+pDiv.innerHTML = "";
+lDiv.innerHTML = "";
+
+// 📥 PENDING
+pending.forEach((url,i)=>{
+
+pDiv.innerHTML += `
+<div>
+<img src="${url}">
+<br>
+<button onclick="approva(${i})">APPROVA</button>
+<button onclick="eliminaPending(${i})">ELIMINA</button>
+</div>
+`;
+
+});
+
+// ✅ LIVE
+live.forEach((url,i)=>{
+
+lDiv.innerHTML += `
+<div>
+<img src="${url}">
+<br>
 <span style="color:lime">✔ APPROVATA</span>
-<button onclick="elimina('${id}')">ELIMINA</button>
-<hr>
+<button onclick="eliminaLive(${i})">ELIMINA</button>
+</div>
 `;
 
-}
-
 });
 
 }
 
-window.approva = async function(url){
+// 🔥 APPROVA
+function approva(i){
 
-let blob = await fetch(url).then(r=>r.blob());
+live.push(pending[i]);
+pending.splice(i,1);
 
-let form = new FormData();
-form.append("file", blob);
-form.append("upload_preset", UPLOAD_PRESET);
-form.append("tags", `evento_${ev},live`);
-
-await fetch(
-`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-{
-method:"POST",
-body:form
-});
-
-load();
+save();
+render();
 
 }
 
-window.elimina = function(id){
-
-nascosti.push(id);
-localStorage.setItem("nascosti", JSON.stringify(nascosti));
-
-load();
-
+// ❌ ELIMINA
+function eliminaPending(i){
+pending.splice(i,1);
+save();
+render();
 }
 
-setInterval(load,3000);
-load();
+function eliminaLive(i){
+live.splice(i,1);
+save();
+render();
+}
+
+// 💾 SAVE
+function save(){
+localStorage.setItem("pending", JSON.stringify(pending));
+localStorage.setItem("live", JSON.stringify(live));
+}
+
+// 🔄 LOOP
+setInterval(render,2000);
+
+render();
 
 </script>
 
