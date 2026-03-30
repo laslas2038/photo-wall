@@ -3,6 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css">
+
+<style>
+
+/* 🔥 FULLSCREEN VIEWER */
+#viewer{
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+background:black;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:999;
+}
+
+#viewer img{
+max-width:90vw;
+max-height:70vh;
+border-radius:20px;
+box-shadow:0 0 40px magenta;
+}
+
+.viewer-controls{
+margin-top:20px;
+}
+
+.viewer-controls button{
+padding:15px 25px;
+font-size:18px;
+margin:5px;
+border-radius:10px;
+}
+
+</style>
+
 </head>
 
 <body>
@@ -18,6 +56,16 @@
 
 <h2>✅ APPROVATE</h2>
 <div id="live" class="grid-admin"></div>
+
+<!-- 🔥 VIEWER -->
+<div id="viewer" onclick="chiudiViewer()">
+<img id="viewerImg">
+
+<div class="viewer-controls" onclick="event.stopPropagation()">
+<button class="approve" onclick="approvaCorrente()">APPROVA</button>
+<button class="delete" onclick="eliminaCorrente()">ELIMINA</button>
+</div>
+</div>
 
 <script type="module">
 
@@ -36,20 +84,27 @@ const db = getFirestore(app);
 const pendingDiv = document.getElementById("pending");
 const liveDiv = document.getElementById("live");
 
+// 🔥 ARRAY GLOBALE PER VIEWER
+let fotoList = [];
+let currentIndex = 0;
+
 // 🔥 REALTIME
 onSnapshot(collection(db, "eventi", EVENTO, "foto"), (snapshot) => {
 
 pendingDiv.innerHTML = "";
 liveDiv.innerHTML = "";
+fotoList = [];
 
 snapshot.forEach(d => {
 
 let data = d.data();
 let id = d.id;
 
+fotoList.push({id, ...data});
+
 let html = `
 <div class="card">
-<img src="${data.url}">
+<img src="${data.url}" onclick="apriViewer('${id}')">
 <br>
 `;
 
@@ -74,20 +129,104 @@ liveDiv.innerHTML += html + "</div>";
 
 });
 
-// ✅ APPROVA
+// 🔥 VIEWER OPEN
+window.apriViewer = function(id){
+
+currentIndex = fotoList.findIndex(f => f.id === id);
+
+document.getElementById("viewer").style.display = "flex";
+document.getElementById("viewerImg").src = fotoList[currentIndex].url;
+
+}
+
+// 🔥 VIEWER CLOSE
+window.chiudiViewer = function(){
+document.getElementById("viewer").style.display = "none";
+}
+
+// 🔥 APPROVA DAL VIEWER
+window.approvaCorrente = async function(){
+
+let id = fotoList[currentIndex].id;
+
+await updateDoc(doc(db, "eventi", EVENTO, "foto", id), {
+stato: "live"
+});
+
+}
+
+// 🔥 ELIMINA DAL VIEWER
+window.eliminaCorrente = async function(){
+
+let id = fotoList[currentIndex].id;
+
+if(!confirm("Eliminare foto?")) return;
+
+await deleteDoc(doc(db, "eventi", EVENTO, "foto", id));
+
+chiudiViewer();
+
+}
+
+// 🔥 APPROVA NORMALE
 window.approva = async function(id){
 await updateDoc(doc(db, "eventi", EVENTO, "foto", id), {
 stato: "live"
 });
 }
 
-// ❌ ELIMINA VERO
+// 🔥 ELIMINA NORMALE
 window.elimina = async function(id){
 
 if(!confirm("Eliminare foto?")) return;
 
 await deleteDoc(doc(db, "eventi", EVENTO, "foto", id));
 
+}
+
+// 🔥 SWIPE TOUCH
+let startX = 0;
+
+document.getElementById("viewer").addEventListener("touchstart", e=>{
+startX = e.touches[0].clientX;
+});
+
+document.getElementById("viewer").addEventListener("touchend", e=>{
+
+let endX = e.changedTouches[0].clientX;
+
+if(endX < startX - 50){
+next();
+}
+
+if(endX > startX + 50){
+prev();
+}
+
+});
+
+// 👉 avanti
+function next(){
+
+if(currentIndex < fotoList.length - 1){
+currentIndex++;
+updateViewer();
+}
+
+}
+
+// 👉 indietro
+function prev(){
+
+if(currentIndex > 0){
+currentIndex--;
+updateViewer();
+}
+
+}
+
+function updateViewer(){
+document.getElementById("viewerImg").src = fotoList[currentIndex].url;
 }
 
 </script>
