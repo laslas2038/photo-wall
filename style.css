@@ -1,66 +1,35 @@
 body{
 margin:0;
-background:black;
 color:white;
 font-family:sans-serif;
-}
-
-/* 🔥 titolo */
-.title{
-position:absolute;
-top:20px;
-left:50%;
-transform:translateX(-50%);
-font-size:40px;
-text-shadow:0 0 20px cyan;
-}
-
-/* 🔥 screen */
-#screen{
-position:fixed;
-width:100vw;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-}
-
-#img{
-width:75vw;
-height:75vh;
-object-fit:contain;
-border-radius:20px;
-box-shadow:0 0 40px magenta;
-transition:all 1s ease;
-}
-
-/* 🔥 animazioni */
-.show{
-opacity:1;
-transform:scale(1);
-filter:brightness(1);
-}
-
-.hide{
-opacity:0;
-transform:scale(1.2);
-filter:brightness(0.5);
+background: radial-gradient(circle at center, #111 0%, #000 100%);
 }
 
 /* 🔥 upload */
 .upload-container{
+width:100vw;
+min-height:100vh;
 display:flex;
 flex-direction:column;
-align-items:center;
 justify-content:center;
-height:100vh;
+align-items:center;
 text-align:center;
+padding:20px;
 }
 
+/* 🔥 logo */
+.logo{
+width:140px;
+margin-bottom:20px;
+display:block;
+}
+
+/* 🔥 testo */
 .subtitle{
 margin-bottom:30px;
 }
 
+/* 🔥 preview */
 #preview{
 display:flex;
 flex-wrap:wrap;
@@ -89,6 +58,36 @@ background:magenta;
 transition:0.3s;
 }
 
+/* 🔥 screen */
+#screen{
+position:fixed;
+width:100vw;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+#img{
+width:75vw;
+height:75vh;
+object-fit:contain;
+border-radius:20px;
+box-shadow:0 0 40px magenta;
+transition:all 1s ease;
+}
+
+/* 🔥 animazioni */
+.show{
+opacity:1;
+transform:scale(1);
+}
+
+.hide{
+opacity:0;
+transform:scale(1.2);
+}
+
 /* 🔥 admin */
 .grid-admin{
 display:flex;
@@ -97,11 +96,11 @@ justify-content:center;
 }
 
 .card{
-background:#111;
+background: rgba(255,255,255,0.05);
 padding:15px;
 margin:10px;
 border-radius:15px;
-box-shadow:0 0 20px rgba(255,0,255,0.4);
+box-shadow:0 0 20px rgba(255,0,255,0.2);
 text-align:center;
 }
 
@@ -110,7 +109,7 @@ width:220px;
 border-radius:12px;
 }
 
-/* bottoni */
+/* 🔥 bottoni */
 button{
 padding:12px 20px;
 border:none;
@@ -133,34 +132,4 @@ color:white;
 .ok{
 color:lime;
 font-weight:bold;
-}
-
-/* 🔥 LOGO GENERICO */
-.logo{
-width:140px;
-margin-bottom:20px;
-opacity:0.9;
-filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
-}
-
-/* 🔥 LOGO SCHERMO GRANDE */
-.logo-screen{
-position:absolute;
-top:20px;
-left:20px;
-width:120px;
-opacity:0.8;
-}
-
-/* 🔥 SFONDO PIÙ FIGO */
-body{
-background: radial-gradient(circle at center, #111 0%, #000 100%);
-}
-
-/* 🔥 CARD ADMIN */
-.card{
-background: rgba(255,255,255,0.05);
-padding:10px;
-border-radius:15px;
-box-shadow:0 0 20px rgba(255,0,255,0.2);
 }
