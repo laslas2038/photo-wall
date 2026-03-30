@@ -8,18 +8,10 @@
 
 <body>
 
-.upload-container{
-width:100vw;
-min-height:100vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:20px;
-}
+<div class="upload-container">
 
 <img src="las-logo.png" class="logo">
+
 <h1>LAS</h1>
 
 <p class="subtitle">
@@ -90,7 +82,6 @@ reader.readAsDataURL(file);
 
 });
 
-// 🚀 UPLOAD
 window.up = async function(){
 
 if(selectedFiles.length === 0){
@@ -122,14 +113,12 @@ body:form
 
 let data = await res.json();
 
-// 🔥 salva su firebase
 await addDoc(collection(db, "eventi", EVENTO, "foto"), {
 url: data.secure_url,
 stato: "pending",
 created: Date.now()
 });
 
-// progress
 count++;
 bar.style.width = Math.round((count/totale)*100) + "%";
 
