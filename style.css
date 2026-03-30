@@ -59,6 +59,14 @@ transition:0.3s;
 }
 
 /* 🔥 screen */
+.logo-screen{
+position:absolute;
+top:20px;
+left:20px;
+width:120px;
+opacity:0.8;
+}
+
 #screen{
 position:fixed;
 width:100vw;
