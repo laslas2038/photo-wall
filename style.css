@@ -38,7 +38,7 @@ text-shadow:0 0 20px rgba(255,255,255,0.3);
 
 /* 🔥 TESTO */
 .subtitle{
-font-size:22px;
+font-size:28px;
 margin-bottom:40px;
 line-height:1.5;
 opacity:0.9;
@@ -55,7 +55,7 @@ margin:15px 0;
 
 /* 🔥 COUNTER */
 #counter{
-font-size:18px;
+font-size:24px;
 margin:10px 0;
 opacity:0.8;
 }
