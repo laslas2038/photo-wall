@@ -134,3 +134,33 @@ color:white;
 color:lime;
 font-weight:bold;
 }
+
+/* 🔥 LOGO GENERICO */
+.logo{
+width:140px;
+margin-bottom:20px;
+opacity:0.9;
+filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+}
+
+/* 🔥 LOGO SCHERMO GRANDE */
+.logo-screen{
+position:absolute;
+top:20px;
+left:20px;
+width:120px;
+opacity:0.8;
+}
+
+/* 🔥 SFONDO PIÙ FIGO */
+body{
+background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
+
+/* 🔥 CARD ADMIN */
+.card{
+background: rgba(255,255,255,0.05);
+padding:10px;
+border-radius:15px;
+box-shadow:0 0 20px rgba(255,0,255,0.2);
+}
