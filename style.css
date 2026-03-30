@@ -17,47 +17,53 @@ justify-content:center;
 align-items:center;
 text-align:center;
 padding:20px;
-transform: scale(1.3); /* leggero zoom globale */
 }
 
 /* 🔥 LOGO */
 .logo{
-width:220px;
-margin-bottom:30px;
-display:block;
-filter: drop-shadow(0 0 15px gold);
-}
-
-/* 🔥 TITOLO */
-h1{
-font-size:60px;
-margin:10px 0;
-letter-spacing:4px;
-text-shadow:0 0 20px rgba(255,255,255,0.3);
-}
-
-/* 🔥 TESTO */
-.subtitle{
-font-size:28px;
+width:260px;
 margin-bottom:40px;
-line-height:1.5;
-opacity:0.9;
+display:block;
+filter: drop-shadow(0 0 25px gold);
+}
+
+/* 🔥 TITOLO (se lo rimetti) */
+h1{
+font-size:70px;
+margin:10px 0;
+letter-spacing:6px;
+text-shadow:0 0 30px rgba(255,255,255,0.4);
+}
+
+/* 🔥 SOTTOTITOLO FIGO */
+.subtitle{
+font-size:32px;
+margin-bottom:50px;
+line-height:1.6;
+font-weight:500;
+letter-spacing:1px;
+
+background: linear-gradient(90deg, #ffffff, #bbbbbb);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+
+text-shadow:0 0 20px rgba(255,255,255,0.1);
 }
 
 /* 🔥 INPUT FILE */
 #files{
-font-size:18px;
-padding:12px;
-border-radius:10px;
+font-size:20px;
+padding:14px;
+border-radius:12px;
 border:none;
-margin:15px 0;
+margin:20px 0;
 }
 
 /* 🔥 COUNTER */
 #counter{
-font-size:24px;
-margin:10px 0;
-opacity:0.8;
+font-size:26px;
+margin:15px 0;
+opacity:0.9;
 }
 
 /* 🔥 PREVIEW */
@@ -68,13 +74,13 @@ justify-content:center;
 }
 
 .preview-img{
-width:100px;
-margin:6px;
-border-radius:12px;
-box-shadow:0 0 10px rgba(255,255,255,0.2);
+width:110px;
+margin:8px;
+border-radius:14px;
+box-shadow:0 0 15px rgba(255,255,255,0.25);
 }
 
-/* 🔥 PROGRESS (NON TOCCATA COME VOLEVI) */
+/* 🔥 PROGRESS */
 #progressBox{
 width:80%;
 height:10px;
@@ -90,18 +96,28 @@ background:magenta;
 transition:0.3s;
 }
 
-/* 🔥 BOTTONE CARICA */
+/* 🔥 BOTTONE CARICA (più bello) */
 .send-btn{
-font-size:22px;
-padding:18px 45px;
+font-size:26px;
+padding:20px 60px;
 border:none;
-border-radius:15px;
+border-radius:18px;
+
 background:linear-gradient(45deg, gold, orange);
 color:black;
 font-weight:bold;
+
 cursor:pointer;
-box-shadow:0 0 20px rgba(255,215,0,0.6);
+
+box-shadow:
+0 0 25px rgba(255,215,0,0.7),
+0 0 60px rgba(255,140,0,0.3);
+
 transition:0.2s;
+}
+
+.send-btn:hover{
+transform:scale(1.05);
 }
 
 .send-btn:active{
@@ -111,12 +127,12 @@ transform:scale(0.95);
 /* 🔥 SCREEN LOGO */
 .logo-screen{
 position:absolute;
-top:20px;
+top:30px;
 left:50%;
 transform:translateX(-50%);
-width:160px;
+width:180px;
 opacity:0.95;
-filter: drop-shadow(0 0 20px gold);
+filter: drop-shadow(0 0 25px gold);
 }
 
 /* 🔥 SCREEN */
