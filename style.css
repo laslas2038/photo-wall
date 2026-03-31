@@ -131,8 +131,8 @@ top:30px;
 left:50%;
 transform:translateX(-50%);
 
-/* 🔥 RESPONSIVE */
-width: min(35vw, 500px); 
+/* 🔥 MOLTO PIÙ GRANDE */
+width: min(50vw, 800px);
 
 opacity:0.95;
 filter: drop-shadow(0 0 30px gold);
