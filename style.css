@@ -4,7 +4,7 @@ margin:0;
 padding:0;
 color:white;
 font-family:sans-serif;
-background:#000; /* 🔥 forza nero */
+background:#000;
 overflow:hidden;
 }
 
@@ -20,51 +20,65 @@ text-align:center;
 padding:20px;
 }
 
-/* 🔥 LOGO (upload/admin) */
+/* 🔥 LOGO */
 .logo{
 width:260px;
 margin-bottom:40px;
-display:block;
 filter: drop-shadow(0 0 25px gold);
 }
 
-/* 🔥 TITOLO */
-h1{
-font-size:70px;
-margin:10px 0;
-letter-spacing:6px;
-text-shadow:0 0 30px rgba(255,255,255,0.4);
-}
-
-/* 🔥 SOTTOTITOLO FIGO */
+/* 🔥 SUBTITLE */
 .subtitle{
 font-size:32px;
-margin-bottom:50px;
+margin-bottom:40px;
 line-height:1.6;
-font-weight:500;
-letter-spacing:1px;
-
-background: linear-gradient(90deg, #ffffff, #bbbbbb);
+background: linear-gradient(90deg, #fff, #bbb);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
-
-text-shadow:0 0 20px rgba(255,255,255,0.1);
 }
 
-/* 🔥 INPUT FILE */
+/* 🔥 NASCONDE INPUT */
 #files{
+display:none;
+}
+
+/* 🔥 BOTTONE FILE */
+.file-btn{
+font-size:26px;
+padding:20px 60px;
+border-radius:18px;
+background:linear-gradient(45deg, gold, orange);
+color:black;
+font-weight:bold;
+cursor:pointer;
+margin:15px 0;
+
+box-shadow:
+0 0 25px rgba(255,215,0,0.7),
+0 0 60px rgba(255,140,0,0.3);
+
+transition:0.2s;
+}
+
+.file-btn:hover{
+transform:scale(1.05);
+}
+
+.file-btn:active{
+transform:scale(0.95);
+}
+
+/* 🔥 FILE NAME */
+#fileName{
 font-size:20px;
-padding:14px;
-border-radius:12px;
-border:none;
-margin:20px 0;
+margin:10px 0;
+opacity:0.8;
 }
 
 /* 🔥 COUNTER */
 #counter{
-font-size:26px;
-margin:15px 0;
-opacity:0.9;
+font-size:24px;
+margin:10px 0;
 }
 
 /* 🔥 PREVIEW */
@@ -97,17 +111,15 @@ background:magenta;
 transition:0.3s;
 }
 
-/* 🔥 BOTTONE */
+/* 🔥 BOTTONE CARICA */
 .send-btn{
 font-size:26px;
 padding:20px 60px;
 border:none;
 border-radius:18px;
-
 background:linear-gradient(45deg, gold, orange);
 color:black;
 font-weight:bold;
-
 cursor:pointer;
 
 box-shadow:
@@ -123,109 +135,4 @@ transform:scale(1.05);
 
 .send-btn:active{
 transform:scale(0.95);
-}
-
-.logo-screen{
-position:absolute;
-top:30px;
-left:50%;
-transform:translateX(-50%);
-
-/* 🔥 MOLTO PIÙ GRANDE */
-width: min(50vw, 800px);
-
-opacity:0.95;
-filter: drop-shadow(0 0 30px gold);
-
-pointer-events:none;
-z-index:10;
-}
-
-/* 🔥 SCREEN */
-#screen{
-position:fixed;
-top:0;
-left:0;
-width:100vw;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#000; /* 🔥 FIX BIANCO */
-}
-
-/* 🔥 IMMAGINE */
-#img{
-width:80vw;
-height:80vh;
-object-fit:contain;
-border-radius:25px;
-box-shadow:0 0 60px magenta;
-transition:all 1s ease;
-}
-
-/* 🔥 ANIMAZIONI */
-.show{
-opacity:1;
-transform:scale(1);
-}
-
-.hide{
-opacity:0;
-transform:scale(1.15);
-}
-
-/* 🔥 ADMIN GRID */
-.grid-admin{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-}
-
-/* 🔥 CARD */
-.card{
-background: rgba(255,255,255,0.06);
-padding:20px;
-margin:12px;
-border-radius:20px;
-box-shadow:0 0 25px rgba(255,0,255,0.25);
-text-align:center;
-}
-
-.card img{
-width:240px;
-border-radius:15px;
-}
-
-/* 🔥 BOTTONI */
-button{
-padding:14px 24px;
-border:none;
-border-radius:12px;
-font-size:18px;
-cursor:pointer;
-margin:6px;
-transition:0.2s;
-}
-
-button:active{
-transform:scale(0.95);
-}
-
-.approve{
-background:lime;
-color:black;
-box-shadow:0 0 10px lime;
-}
-
-.delete{
-background:red;
-color:white;
-box-shadow:0 0 10px red;
-}
-
-.ok{
-color:lime;
-font-weight:bold;
-font-size:18px;
 }
