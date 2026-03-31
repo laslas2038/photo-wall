@@ -1,14 +1,11 @@
 /* 🔥 BASE */
-body{
+html, body{
 margin:0;
+padding:0;
 color:white;
 font-family:sans-serif;
-background: radial-gradient(circle at center, #111 0%, #000 100%);
+background:#000; /* 🔥 forza nero */
 overflow:hidden;
-}
-
-html, body{
-background:#000;
 }
 
 /* 🔥 UPLOAD CONTAINER */
@@ -23,7 +20,7 @@ text-align:center;
 padding:20px;
 }
 
-/* 🔥 LOGO */
+/* 🔥 LOGO (upload/admin) */
 .logo{
 width:260px;
 margin-bottom:40px;
@@ -31,7 +28,7 @@ display:block;
 filter: drop-shadow(0 0 25px gold);
 }
 
-/* 🔥 TITOLO (se lo rimetti) */
+/* 🔥 TITOLO */
 h1{
 font-size:70px;
 margin:10px 0;
@@ -100,7 +97,7 @@ background:magenta;
 transition:0.3s;
 }
 
-/* 🔥 BOTTONE CARICA (più bello) */
+/* 🔥 BOTTONE */
 .send-btn{
 font-size:26px;
 padding:20px 60px;
@@ -128,27 +125,33 @@ transform:scale(1.05);
 transform:scale(0.95);
 }
 
-/* 🔥 SCREEN LOGO */
+/* 🔥 LOGO SCREEN (FIX PERFETTO) */
 .logo-screen{
 position:absolute;
 top:30px;
 left:50%;
 transform:translateX(-50%);
-width:180px;
+width:240px; /* 🔥 più grande */
 opacity:0.95;
-filter: drop-shadow(0 0 25px gold);
+filter: drop-shadow(0 0 30px gold);
+pointer-events:none; /* 🔥 non blocca touch */
+z-index:10;
 }
 
 /* 🔥 SCREEN */
 #screen{
 position:fixed;
+top:0;
+left:0;
 width:100vw;
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+background:#000; /* 🔥 FIX BIANCO */
 }
 
+/* 🔥 IMMAGINE */
 #img{
 width:80vw;
 height:80vh;
@@ -158,7 +161,7 @@ box-shadow:0 0 60px magenta;
 transition:all 1s ease;
 }
 
-/* 🔥 ANIMAZIONI FOTO */
+/* 🔥 ANIMAZIONI */
 .show{
 opacity:1;
 transform:scale(1);
