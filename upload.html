@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Upload</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 
 <body>
@@ -17,16 +17,19 @@ CARICA LA TUA FOTO<br>
 VEDILA SUL MAXI SCHERMO
 </p>
 
-<!-- 🔥 BOTTONE CUSTOM -->
+<!-- 🔥 INPUT NASCOSTO -->
 <input type="file" id="files" multiple accept="image/*">
+
+<!-- 🔥 BOTTONE FIGO -->
 <label for="files" class="file-btn">📸 SCEGLI FOTO</label>
-<div id="fileName">Nessun file selezionato</div>
 
 <!-- 🔥 NOME FILE -->
-<div id="fileName"></div>
+<div id="fileName">Nessun file selezionato</div>
 
+<!-- 🔥 COUNTER -->
 <div id="counter"></div>
 
+<!-- 🔥 PREVIEW -->
 <div id="preview"></div>
 
 <br>
@@ -64,7 +67,10 @@ preview.innerHTML = "";
 selectedFiles = Array.from(e.target.files);
 
 // 🔥 nome file
-if(selectedFiles.length === 1){
+if(selectedFiles.length === 0){
+fileName.innerText = "Nessun file selezionato";
+}
+else if(selectedFiles.length === 1){
 fileName.innerText = selectedFiles[0].name;
 }else{
 fileName.innerText = selectedFiles.length + " file selezionati";
@@ -73,7 +79,7 @@ fileName.innerText = selectedFiles.length + " file selezionati";
 // 🔥 counter
 counter.innerText = selectedFiles.length + " foto selezionate";
 
-// 🔥 preview immagini
+// 🔥 preview
 selectedFiles.forEach(file => {
 
 let reader = new FileReader();
@@ -126,6 +132,7 @@ body:form
 
 let data = await res.json();
 
+// 🔥 cache busting
 await addDoc(collection(db, "eventi", EVENTO, "foto"), {
 url: data.secure_url + "?t=" + Date.now(),
 stato: "pending",
