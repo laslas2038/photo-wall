@@ -17,11 +17,14 @@ CARICA LA TUA FOTO<br>
 VEDILA SUL MAXI SCHERMO
 </p>
 
+<!-- 🔥 BOTTONE CUSTOM -->
+<label for="files" class="file-btn">SCEGLI FOTO</label>
 <input type="file" id="files" multiple accept="image/*">
 
-<br>
+<!-- 🔥 NOME FILE -->
+<div id="fileName"></div>
+
 <div id="counter"></div>
-<br>
 
 <div id="preview"></div>
 
@@ -53,13 +56,23 @@ document.getElementById("files").addEventListener("change", e => {
 
 let preview = document.getElementById("preview");
 let counter = document.getElementById("counter");
+let fileName = document.getElementById("fileName");
 
 preview.innerHTML = "";
 
 selectedFiles = Array.from(e.target.files);
 
+// 🔥 nome file
+if(selectedFiles.length === 1){
+fileName.innerText = selectedFiles[0].name;
+}else{
+fileName.innerText = selectedFiles.length + " file selezionati";
+}
+
+// 🔥 counter
 counter.innerText = selectedFiles.length + " foto selezionate";
 
+// 🔥 preview immagini
 selectedFiles.forEach(file => {
 
 let reader = new FileReader();
@@ -80,6 +93,7 @@ reader.readAsDataURL(file);
 
 });
 
+// 🚀 UPLOAD
 window.up = async function(){
 
 if(selectedFiles.length === 0){
@@ -112,7 +126,7 @@ body:form
 let data = await res.json();
 
 await addDoc(collection(db, "eventi", EVENTO, "foto"), {
-url: data.secure_url,
+url: data.secure_url + "?t=" + Date.now(),
 stato: "pending",
 created: Date.now()
 });
