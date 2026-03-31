@@ -125,16 +125,19 @@ transform:scale(1.05);
 transform:scale(0.95);
 }
 
-/* 🔥 LOGO SCREEN (FIX PERFETTO) */
 .logo-screen{
 position:absolute;
 top:30px;
 left:50%;
 transform:translateX(-50%);
-width:240px; /* 🔥 più grande */
+
+/* 🔥 RESPONSIVE */
+width: min(35vw, 500px); 
+
 opacity:0.95;
 filter: drop-shadow(0 0 30px gold);
-pointer-events:none; /* 🔥 non blocca touch */
+
+pointer-events:none;
 z-index:10;
 }
 
