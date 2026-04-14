@@ -74,13 +74,18 @@ import {firebaseConfig,EVENTO} from "./config.js";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import { getFirestore, collection, onSnapshot, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
-if(sessionStorage.getItem("admin") !== "ok"){
-location = "admin-login.html";
-}
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+
+// 🔐 CONTROLLO LOGIN VERO FIREBASE
+onAuthStateChanged(auth, (user) => {
+if(!user){
+location = "admin-login.html";
+}
+});
 
 const pendingDiv = document.getElementById("pending");
 const liveDiv = document.getElementById("live");
