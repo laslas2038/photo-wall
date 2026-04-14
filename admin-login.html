@@ -10,24 +10,43 @@
 
 <h1>ADMIN LOGIN</h1>
 
-<input type="password" id="p" placeholder="Password">
+<input type="email" id="email" placeholder="Email">
+<br><br>
+
+<input type="password" id="pass" placeholder="Password">
 <br><br>
 
 <button onclick="login()" class="send-btn">LOGIN</button>
 
-<script>
-const ADMIN_PASSWORD = "laslas2000";
+<script type="module">
 
-function login(){
-let pass = document.getElementById("p").value;
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-if(pass === ADMIN_PASSWORD){
+import { firebaseConfig } from "./config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.login = async function(){
+
+let email = document.getElementById("email").value;
+let pass = document.getElementById("pass").value;
+
+try{
+await signInWithEmailAndPassword(auth, email, pass);
+
+// salva sessione locale (per il redirect)
 sessionStorage.setItem("admin","ok");
+
 location = "admin.html";
-}else{
-alert("Password errata");
+
+}catch(e){
+alert("Login errato");
 }
+
 }
+
 </script>
 
 </body>
