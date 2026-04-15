@@ -152,12 +152,14 @@ transform:scale(0.95);
 /* 🔥 SCREEN LOGO */
 .logo-screen{
 position:absolute;
-top:30px;
+top:10px; /* 🔥 più in alto */
 left:50%;
 transform:translateX(-50%);
-width: min(50vw, 800px);
+width: min(40vw, 500px); /* 🔥 leggermente più compatto */
+
 opacity:0.95;
 filter: drop-shadow(0 0 30px gold);
+
 pointer-events:none;
 z-index:10;
 }
