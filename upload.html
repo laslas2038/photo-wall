@@ -125,9 +125,12 @@ body:form
 
 let data = await res.json();
 
+// 🔥 QUI HO AGGIUNTO I CAMPI LIKE
 await addDoc(collection(db, "eventi", EVENTO, "foto"), {
 url: data.secure_url + "?t=" + Date.now(),
 stato: "pending",
+likes: 0,        // 👈 NUOVO
+voters: [],      // 👈 NUOVO
 created: Date.now()
 });
 
