@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<img src="las-logo.png" class="logo">
+
+<h1 style="text-align:center">VOTA LE FOTO</h1>
+
+<div id="gallery" class="grid-admin"></div>
+
+<script type="module">
+
+import {firebaseConfig,EVENTO} from "./config.js";
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 🔥 ID DISPOSITIVO
+let deviceId = localStorage.getItem("deviceId");
+
+if(!deviceId){
+deviceId = Math.random().toString(36).substring(2);
+localStorage.setItem("deviceId", deviceId);
+}
+
+const gallery = document.getElementById("gallery");
+
+// 🔥 CARICA FOTO
+onSnapshot(collection(db, "eventi", EVENTO, "foto"), (snapshot) => {
+
+gallery.innerHTML = "";
+
+snapshot.forEach(d => {
+
+let data = d.data();
+let id = d.id;
+
+if(data.stato !== "live") return;
+
+// sicurezza per foto vecchie
+let voters = data.voters || [];
+let likes = data.likes || 0;
+
+let giaVotato = voters.includes(deviceId);
+
+gallery.innerHTML += `
+<div class="card">
+<img src="${data.url}">
+<br>
+
+<button onclick="like('${id}')">
+❤️ ${likes}
+</button>
+
+${giaVotato ? "<div class='ok'>✔ hai già votato</div>" : ""}
+
+</div>
+`;
+
+});
+
+});
+
+// 🔥 LIKE
+window.like = async function(id){
+
+let ref = doc(db, "eventi", EVENTO, "foto", id);
+
+// prendiamo dati aggiornati
+let snapshot = await import("https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js")
+.then(m => m.getDoc(ref));
+
+let data = snapshot.data();
+
+let voters = data.voters || [];
+
+if(voters.includes(deviceId)){
+alert("Hai già votato questa foto");
+return;
+}
+
+await updateDoc(ref, {
+likes: (data.likes || 0) + 1,
+voters: [...voters, deviceId]
+});
+
+}
+
+</script>
+
+</body>
+</html>
