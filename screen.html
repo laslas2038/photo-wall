@@ -15,7 +15,6 @@ transform:translateX(-50%);
 
 font-size:40px;
 font-weight:bold;
-
 color:white;
 
 background: rgba(0,0,0,0.4);
@@ -31,10 +30,29 @@ align-items:center;
 gap:10px;
 }
 
-/* ❤️ cuore */
+/* ❤️ cuore che pulsa SEMPRE */
 #likeBox span{
 color:magenta;
 font-size:45px;
+animation: pulse 1.2s infinite;
+}
+
+/* 💥 animazione battito */
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.25);}
+100%{transform:scale(1);}
+}
+
+/* 💥 effetto numero */
+.pop{
+animation: pop 0.3s ease;
+}
+
+@keyframes pop{
+0%{transform:scale(1);}
+50%{transform:scale(1.4);}
+100%{transform:scale(1);}
 }
 
 </style>
@@ -67,6 +85,7 @@ const db = getFirestore(app);
 
 let immagini = [];
 let index = 0;
+let lastLike = 0;
 
 // 🔥 CARICA FOTO + LIKE
 onSnapshot(collection(db, "eventi", EVENTO, "foto"), (snapshot) => {
@@ -106,8 +125,16 @@ setTimeout(()=>{
 
 img.src = immagini[index].url;
 
-// 🔥 aggiorna like
-likeBox.innerText = immagini[index].likes;
+// 🔥 aggiorna like con animazione
+let nuoviLike = immagini[index].likes;
+
+if(nuoviLike !== lastLike){
+likeBox.classList.add("pop");
+setTimeout(()=> likeBox.classList.remove("pop"), 300);
+}
+
+likeBox.innerText = nuoviLike;
+lastLike = nuoviLike;
 
 img.classList.remove("hide");
 img.classList.add("show");
