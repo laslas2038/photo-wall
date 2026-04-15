@@ -3,6 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css">
+
+<style>
+
+/* 🔥 BOX LIKE */
+#likeBox{
+position:absolute;
+bottom:40px;
+left:50%;
+transform:translateX(-50%);
+
+font-size:40px;
+font-weight:bold;
+
+color:white;
+
+background: rgba(0,0,0,0.4);
+padding:15px 30px;
+border-radius:20px;
+
+backdrop-filter: blur(10px);
+
+box-shadow:0 0 20px rgba(255,0,150,0.5);
+
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+/* ❤️ cuore */
+#likeBox span{
+color:magenta;
+font-size:45px;
+}
+
+</style>
+
 </head>
 
 <body>
@@ -11,6 +47,12 @@
 
 <div id="screen">
 <img id="img">
+</div>
+
+<!-- 🔥 LIKE -->
+<div id="likeBox">
+<span>❤️</span>
+<div id="likeCount">0</div>
 </div>
 
 <script type="module">
@@ -26,17 +68,26 @@ const db = getFirestore(app);
 let immagini = [];
 let index = 0;
 
+// 🔥 CARICA FOTO + LIKE
 onSnapshot(collection(db, "eventi", EVENTO, "foto"), (snapshot) => {
 
 immagini = [];
 
 snapshot.forEach(d => {
 let data = d.data();
-if(data.stato === "live") immagini.push(data.url);
+
+if(data.stato === "live"){
+immagini.push({
+url: data.url,
+likes: data.likes || 0
 });
+}
 
 });
 
+});
+
+// 🔥 LOOP
 function loop(){
 
 if(immagini.length === 0){
@@ -47,12 +98,17 @@ return;
 if(index >= immagini.length) index = 0;
 
 let img = document.getElementById("img");
+let likeBox = document.getElementById("likeCount");
 
 img.classList.add("hide");
 
 setTimeout(()=>{
 
-img.src = immagini[index];
+img.src = immagini[index].url;
+
+// 🔥 aggiorna like
+likeBox.innerText = immagini[index].likes;
+
 img.classList.remove("hide");
 img.classList.add("show");
 
